@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Venn Lab: learn sets visually</title>
+<style>
+:root{--bg:#f1f4f9;--card:#fff;--ink:#14213d;--mut:#5d6677;--line:#d3d9e4;--surf:#fff;--shade:#ffd23f;--acc:#14213d;--ok:#1c7c45;--bad:#b3261e;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0e1320;--card:#172033;--ink:#e8edf7;--mut:#98a3b8;--line:#2c3850;--surf:#172033;--shade:#8f7410;--acc:#e8edf7;--ok:#5ccf8c;--bad:#ff8c84}}
+:root[data-theme="dark"]{--bg:#0e1320;--card:#172033;--ink:#e8edf7;--mut:#98a3b8;--line:#2c3850;--surf:#172033;--shade:#8f7410;--acc:#e8edf7;--ok:#5ccf8c;--bad:#ff8c84}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+[hidden]{display:none!important}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+.wrap{max-width:1060px;margin:0 auto;padding:18px 14px 40px}
+h1{font:700 30px/1.2 Georgia,"Times New Roman",serif;margin:0 0 4px}
+h2{font:700 17px Georgia,serif;margin:14px 0 6px}
+p{margin:4px 0}
+.mut{color:var(--mut);font-size:14px}
+.tabs{display:flex;gap:8px;margin:14px 0;flex-wrap:wrap}
+.grid{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:14px;align-items:start}
+@media(max-width:820px){.grid{grid-template-columns:minmax(0,1fr)}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px}
+canvas{width:100%;height:auto;display:block;border-radius:8px;cursor:pointer;touch-action:manipulation}
+button{font:inherit;font-size:15px;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:8px;padding:5px 11px;cursor:pointer}
+button:hover{border-color:var(--acc)}
+button:focus-visible,input:focus-visible,summary:focus-visible{outline:3px solid #2f7fd0;outline-offset:2px}
+button.on{background:var(--acc);color:var(--bg);border-color:var(--acc)}
+button:disabled{opacity:.5;cursor:default}
+input{font:inherit;width:100%;box-sizing:border-box;padding:6px 8px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink)}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0}
+.row{display:grid;grid-template-columns:34px 1fr;gap:8px;align-items:center;margin:5px 0}
+.row b{font:700 20px Georgia,serif;text-align:center}
+.res{background:var(--bg);border-radius:8px;padding:8px 10px;margin:8px 0;overflow-wrap:anywhere}
+.ex{font:700 18px Georgia,serif}
+.err{color:var(--bad);font-size:14px;min-height:20px}
+.lw{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:560px){.lw{grid-template-columns:minmax(0,1fr)}}
+.ok{color:var(--ok);font-weight:700}.bad{color:var(--bad);font-weight:700}
+table{border-collapse:collapse;font-size:14px;width:100%}td{padding:3px 6px;border-top:1px solid var(--line)}
+details{margin-top:10px}summary{cursor:pointer;font-weight:600}
+</style></head><body><div class="wrap">
+<h1>Venn Lab</h1>
+<p class="mut">Put elements into sets, apply set operations, and see exactly which region of the diagram each one shades.</p>
+<div class="tabs" id="tabs"><button data-t="lab" class="on">Lab</button><button data-t="laws">Laws</button><button data-t="prac">Practice</button></div>
+
+<section id="lab"><div class="grid">
+<div class="card">
+<canvas id="cv" width="1120" height="800" aria-label="Venn diagram. Click regions to shade them."></canvas>
+<p class="mut" id="hov" style="min-height:22px;margin-top:8px">Hover or tap a region to see its name and elements. Click to shade it.</p>
+<div class="chips"><button id="clr">Clear shading</button><button id="all">Shade everything</button></div>
+<details><summary>Symbol guide</summary><table>
+<tr><td><b>U</b></td><td>Universal set: every element under discussion (the rectangle)</td></tr>
+<tr><td><b>A ∪ B</b></td><td>Union: in A <i>or</i> B (or both). Type <code>|</code> or <code>+</code></td></tr>
+<tr><td><b>A ∩ B</b></td><td>Intersection: in A <i>and</i> B. Type <code>&amp;</code> or <code>*</code></td></tr>
+<tr><td><b>A − B</b></td><td>Difference: in A <i>but not</i> B. Type <code>-</code></td></tr>
+<tr><td><b>A′</b></td><td>Complement: in U <i>but not</i> A. Type <code>'</code> after the set, or <code>!</code> before it</td></tr>
+<tr><td><b>A Δ B</b></td><td>Symmetric difference: in exactly one of A, B. Type <code>^</code></td></tr>
+</table></details>
+</div>
+<div class="card">
+<div class="chips" id="nsel"><button data-n="2">2 sets</button><button data-n="3" class="on">3 sets</button></div>
+<div class="row"><b>U</b><input id="iU" value="1 2 3 4 5 6 7 8 9 10 11 12" aria-label="Universal set"></div>
+<div class="row"><b style="color:#e0603a">A</b><input id="iA" value="1 2 3 4 5" aria-label="Set A"></div>
+<div class="row"><b style="color:#2f7fd0">B</b><input id="iB" value="4 5 6 7" aria-label="Set B"></div>
+<div class="row" id="rowC"><b style="color:#3aa66b">C</b><input id="iC" value="3 5 7 8 9" aria-label="Set C"></div>
+<p class="mut">Separate elements with spaces or commas. Use short labels (numbers, or words up to about 5 letters).</p>
+<div class="chips"><button id="rnd">Randomize elements</button></div>
+<h2>Choose an operation</h2>
+<div class="chips" id="ops"></div>
+<h2>Or write your own expression</h2>
+<input id="ex" placeholder="e.g. (A ∪ B)′ ∩ C" aria-label="Set expression" autocomplete="off">
+<div class="chips" id="sym"><button>∪</button><button>∩</button><button>−</button><button>Δ</button><button>′</button><button>(</button><button>)</button></div>
+<div class="err" id="err"></div>
+<p id="opinfo" class="mut"></p>
+<div class="res" id="res"></div>
+<div class="res mut" id="sop"></div>
+<h2>Counting check</h2>
+<div class="res" id="cnt"></div>
+</div></div></section>
+
+<section id="laws" hidden><div class="card">
+<p class="mut">Two expressions are equal for <i>every</i> choice of sets exactly when they shade the same regions. Pick an identity and compare. The ones marked ⚠ look plausible but are false.</p>
+<div class="chips" id="lawchips"></div>
+<h2 id="lawt"></h2>
+<div class="lw"><figure style="margin:0"><canvas id="cl" width="560" height="400"></canvas><figcaption class="ex" id="ll"></figcaption></figure>
+<figure style="margin:0"><canvas id="cr" width="560" height="400"></canvas><figcaption class="ex" id="lr"></figcaption></figure></div>
+<p id="lawv" style="margin-top:10px"></p>
+<button id="lawlab">Open left side in the Lab</button>
+</div></section>
+
+<section id="prac" hidden><div class="card" style="max-width:640px;margin:0 auto">
+<p id="prompt"></p>
+<canvas id="cv3" width="560" height="400"></canvas>
+<div class="chips" id="popts"></div>
+<p id="fb" style="min-height:24px"></p>
+<div class="chips"><button id="next">Next question</button><span class="mut" id="score" style="align-self:center"></span></div>
+</div></section>
+</div>
+<script>
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const COL=['#e0603a','#2f7fd0','#3aa66b'],NM=['A','B','C'];
+const G={2:[[215,200,125],[345,200,125]],3:[[210,145,105],[350,145,105],[280,258,105]]};
+const hex=h=>{h=h.trim().replace('#','');return[0,2,4].map(i=>parseInt(h.substr(i,2),16))};
+const maps={};
+function gm(n,W,H){const k=n+'_'+W;if(maps[k])return maps[k];const s=W/560,cs=G[n].map(c=>c.map(v=>v*s)),m=new Uint8Array(W*H),sx=Array(8).fill(0),sy=Array(8).fill(0),ct=Array(8).fill(0);
+for(let y=0;y<H;y++)for(let x=0;x<W;x++){let v=0;for(let i=0;i<n;i++){const c=cs[i];if((x-c[0])**2+(y-c[1])**2<c[2]*c[2])v|=1<<i}m[y*W+x]=v;sx[v]+=x;sy[v]+=y;ct[v]++}
+return maps[k]={m,cent:ct.map((c,v)=>c?[sx[v]/c/s,sy[v]/c/s]:[0,0])}}
+function draw(cv,n,sh,regs){
+const W=cv.width,H=cv.height,s=W/560,x=cv.getContext('2d'),{m,cent}=gm(n,W,H),cs=getComputedStyle(document.documentElement),
+sf=hex(cs.getPropertyValue('--surf')),sd=hex(cs.getPropertyValue('--shade')),ink=cs.getPropertyValue('--ink').trim(),line=cs.getPropertyValue('--line').trim();
+const im=x.createImageData(W,H),d=im.data;
+for(let i=0;i<m.length;i++){const c=(sh>>m[i])&1?sd:sf;d[4*i]=c[0];d[4*i+1]=c[1];d[4*i+2]=c[2];d[4*i+3]=255}
+x.putImageData(im,0,0);
+x.strokeStyle=line;x.lineWidth=3*s;x.strokeRect(0,0,W,H);
+x.textAlign='center';x.textBaseline='middle';x.fillStyle=ink;x.font=`italic ${22*s}px Georgia,serif`;x.fillText('U',536*s,26*s);
+const g=G[n],ax=g.reduce((a,c)=>a+c[0],0)/n,ay=g.reduce((a,c)=>a+c[1],0)/n;
+g.forEach((c,i)=>{x.strokeStyle=COL[i];x.lineWidth=3.5*s;x.beginPath();x.arc(c[0]*s,c[1]*s,c[2]*s,0,7);x.stroke();
+const dx=c[0]-ax,dy=c[1]-ay,L=Math.hypot(dx,dy)||1;x.fillStyle=COL[i];x.font=`bold ${26*s}px Georgia,serif`;x.fillText(NM[i],(c[0]+dx/L*(c[2]+20))*s,(c[1]+dy/L*(c[2]+20))*s)});
+x.fillStyle=ink;x.font=`600 ${15*s}px system-ui,sans-serif`;
+regs.forEach((L,v)=>{const k=L.length;if(!k)return;
+if(!v)L.forEach((e,i)=>x.fillText(e,(30+(i%4)*32)*s,(380-((i/4)|0)*24)*s));
+else{const cols=Math.min(k,Math.ceil(Math.sqrt(k*1.6))),rows=Math.ceil(k/cols),[cx,cy]=cent[v];
+L.forEach((e,i)=>{const r=(i/cols)|0,c=i%cols,inRow=Math.min(cols,k-r*cols);x.fillText(e,(cx+(c-(inRow-1)/2)*34)*s,(cy+(r-(rows-1)/2)*22)*s)})}})}
+function ev(str,n){const R=1<<n,F=(1<<R)-1,S=[];
+for(let l=0;l<3;l++){let b=0;if(l<n)for(let m=0;m<R;m++)if(m>>l&1)b|=1<<m;S[l]=b}
+const t=[...str].filter(c=>c.trim()),bad=()=>{throw Error('Use A, B, C, U, ∪ ∩ − Δ ′ and parentheses.')};let p=0;
+const has=(set,c)=>c!==undefined&&set.includes(c);
+function expr(){let v=term();while(has('∪|+−-\\Δ^△',t[p])){const o=t[p++],w=term();v=has('∪|+',o)?v|w:has('−-\\',o)?v&~w&F:v^w}return v}
+function term(){let v=un();while(has('∩&*',t[p])){p++;v&=un()}return v}
+function un(){if(has('!~¬',t[p])){p++;return ~un()&F}let v=atom();while(has("'′’ᶜ",t[p])){p++;v=~v&F}return v}
+function atom(){const c=t[p++];if(c==='('){const v=expr();if(t[p++]!==')')bad();return v}
+const u=c&&c.toUpperCase();if(u==='A'||u==='B'||u==='C'){const i=NM.indexOf(u);if(i>=n)throw Error('Switch to 3 sets to use C.');return S[i]}
+if(u==='U')return F;if(c==='∅')return 0;bad()}
+const v=expr();if(p<t.length)bad();return v}
+const rn=(v,n)=>Array.from({length:n},(_,i)=>NM[i]+((v>>i&1)?'':'′')).join('∩');
+function sop(b,n){const R=1<<n;if(!b)return '∅';if(b==(1<<R)-1)return 'U';const a=[];for(let v=0;v<R;v++)if(b>>v&1)a.push(rn(v,n));return a.join(' ∪ ')}
+function pick(cv,e,n){const r=cv.getBoundingClientRect(),W=cv.width,H=cv.height,x=Math.min(W-1,Math.max(0,Math.floor((e.clientX-r.left)/r.width*W))),y=Math.min(H-1,Math.max(0,Math.floor((e.clientY-r.top)/r.height*H)));return gm(n,W,H).m[y*W+x]}
+const OPS={2:[['A∪B','Union','everything in A, in B, or in both.'],['A∩B','Intersection','only what is in both A and B.'],['A−B','Difference','in A but not in B.'],['B−A','Difference','in B but not in A.'],['A′','Complement','everything in U that is not in A.'],['AΔB','Symmetric difference','in exactly one of A, B, not both.'],['(A∪B)′','Neither','outside both sets.'],['A′∩B′','De Morgan form of "neither"','compare with (A∪B)′: the same region.'],['(A∩B)′','Not both','outside the overlap.'],['A′∪B′','De Morgan form of "not both"','compare with (A∩B)′: the same region.']],
+3:[['A∪B∪C','Triple union','in at least one set.'],['A∩B∩C','Triple intersection','in all three sets.'],['A∩B','Pairwise intersection','includes the middle region too.'],['A−(B∪C)','Only A','in A and in neither B nor C.'],['(A∩B)−C','Exactly A and B','in A and B but not C.'],['A∩(B∪C)','Mixed','in A and in at least one of B, C.'],['(A∩B)∪(A∩C)','Distributive form','same region as A∩(B∪C).'],['(A∪B∪C)′','None of them','outside all three circles.'],['AΔBΔC','Odd count','in exactly one set or in all three.'],['A′∩B∩C','Two but not A','in B and C but not A.']]};
+const lab={n:3,shade:0};
+const pl=s=>[...new Set(s.split(/[\s,;]+/).filter(Boolean))];
+function setsOf(){const n=lab.n,sets=['#iA','#iB','#iC'].slice(0,n).map(i=>pl($(i).value)),U=[...new Set([...pl($('#iU').value),...sets.flat()])],ss=sets.map(a=>new Set(a)),regs=Array.from({length:1<<n},()=>[]);
+U.forEach(e=>{let v=0;ss.forEach((s,i)=>{if(s.has(e))v|=1<<i});regs[v].push(e)});return{U,regs}}
+const note=t=>$('#opinfo').textContent=t,L=a=>a.length;
+function renderLab(){const n=lab.n,{U,regs}=setsOf();draw($('#cv'),n,lab.shade,regs);
+const sel=[];regs.forEach((r,v)=>{if(lab.shade>>v&1)sel.push(...r)});
+$('#res').innerHTML=`<b>Result</b> = { ${sel.join(', ')} }<br><span class="mut">${sel.length} element${sel.length==1?'':'s'} out of ${U.length} in U</span>`;
+$('#sop').textContent='Shaded regions, written as a union: '+sop(lab.shade,n);
+const z=v=>L(regs[v]),c=(...vs)=>vs.reduce((a,v)=>a+z(v),0),tot=U.length-z(0);
+if(n==2){const a=c(1,3),b=c(2,3),ab=z(3);$('#cnt').innerHTML=`|A∪B| = |A| + |B| − |A∩B|<br>= ${a} + ${b} − ${ab} = <b>${a+b-ab}</b> ${a+b-ab==tot?'<span class="ok">✔ matches the diagram</span>':''}<br><span class="mut">Adding |A| and |B| counts the overlap twice, so we subtract it once.</span>`}
+else{const a=c(1,3,5,7),b=c(2,3,6,7),cc=c(4,5,6,7),ab=c(3,7),ac=c(5,7),bc=c(6,7),abc=z(7),r=a+b+cc-ab-ac-bc+abc;
+$('#cnt').innerHTML=`|A∪B∪C| = |A|+|B|+|C| − |A∩B| − |A∩C| − |B∩C| + |A∩B∩C|<br>= ${a}+${b}+${cc} − ${ab} − ${ac} − ${bc} + ${abc} = <b>${r}</b> ${r==tot?'<span class="ok">✔ matches the diagram</span>':''}<br><span class="mut">The middle region is added three times, removed three times, then added back once.</span>`}}
+function chips(){$('#ops').innerHTML=OPS[lab.n].map((o,i)=>`<button data-i="${i}">${o[0]}</button>`).join('')}
+function setN(n){lab.n=n;$$('#nsel button').forEach(b=>b.classList.toggle('on',+b.dataset.n==n));$('#rowC').hidden=n<3;lab.shade=0;$('#ex').value='';$('#err').textContent='';chips();note('Pick an operation, write an expression, or click regions of the diagram.');renderLab()}
+$('#nsel').onclick=e=>{const b=e.target.closest('button');if(b)setN(+b.dataset.n)};
+$('#ops').onclick=e=>{const b=e.target.closest('button');if(!b)return;const o=OPS[lab.n][b.dataset.i];$('#ex').value=o[0];$('#err').textContent='';lab.shade=ev(o[0],lab.n);note(`${o[1]}: ${o[2]}`);renderLab()};
+$('#ex').oninput=()=>{const v=$('#ex').value.trim();if(!v){lab.shade=0;$('#err').textContent='';note('');return renderLab()}
+try{lab.shade=ev(v,lab.n);$('#err').textContent='';const m=OPS[lab.n].find(o=>ev(o[0],lab.n)==lab.shade);note(m&&m[0]!=v?`Same region as ${m[0]} (${m[1]}).`:'Custom expression.')}catch(x){$('#err').textContent=x.message}renderLab()};
+$('#sym').onclick=e=>{const b=e.target.closest('button');if(!b)return;const i=$('#ex'),p=i.selectionStart??i.value.length,q=i.selectionEnd??p;i.value=i.value.slice(0,p)+b.textContent+i.value.slice(q);i.focus();i.setSelectionRange(p+1,p+1);i.oninput()};
+['#iU','#iA','#iB','#iC'].forEach(s=>$(s).oninput=renderLab);
+$('#clr').onclick=()=>{lab.shade=0;$('#ex').value='';note('');renderLab()};
+$('#all').onclick=()=>{lab.shade=(1<<(1<<lab.n))-1;$('#ex').value='U';note('Everything in U.');renderLab()};
+$('#rnd').onclick=()=>{const n=lab.n,S=[[],[],[]],U=[];for(let e=1;e<=12;e++){U.push(e);const v=Math.random()<.2?0:1+Math.floor(Math.random()*((1<<n)-1));for(let i=0;i<n;i++)if(v>>i&1)S[i].push(e)}
+$('#iU').value=U.join(' ');$('#iA').value=S[0].join(' ');$('#iB').value=S[1].join(' ');$('#iC').value=S[2].join(' ');renderLab()};
+const cv=$('#cv');
+cv.onclick=e=>{lab.shade^=1<<pick(cv,e,lab.n);$('#ex').value='';$('#err').textContent='';note('Custom shading. Click regions to toggle them.');renderLab()};
+cv.onmousemove=e=>{const v=pick(cv,e,lab.n),r=setsOf().regs[v];$('#hov').textContent=`${rn(v,lab.n)}${v?'':' (outside every set)'}: ${r.length?'{ '+r.join(', ')+' }':'no elements'}`};
+
+const LAWS=[['Commutative (union)','A∪B','B∪A'],['Commutative (intersection)','A∩B','B∩A'],['De Morgan I','(A∪B)′','A′∩B′'],['De Morgan II','(A∩B)′','A′∪B′'],['Difference as intersection','A−B','A∩B′'],['Symmetric difference','AΔB','(A∪B)−(A∩B)'],['Absorption','A∪(A∩B)','A'],['Complement','A∪A′','U'],['Double complement','A′′','A'],['Associative','(A∪B)∪C','A∪(B∪C)'],['Distributive: ∩ over ∪','A∩(B∪C)','(A∩B)∪(A∩C)'],['Distributive: ∪ over ∩','A∪(B∩C)','(A∪B)∩(A∪C)'],['⚠ Complement of a union','(A∪B)′','A′∪B′'],['⚠ Difference is not commutative','A−B','B−A'],['⚠ Difference is not associative','A−(B−C)','(A−B)−C']];
+let li=2;
+function renderLaws(){$('#lawchips').innerHTML=LAWS.map((l,i)=>`<button data-i="${i}" class="${i==li?'on':''}">${l[0]}</button>`).join('');
+const [t,l,r]=LAWS[li],n=/C/.test(l+r)?3:2,a=ev(l,n),b=ev(r,n);
+$('#lawt').textContent=t;draw($('#cl'),n,a,[]);draw($('#cr'),n,b,[]);$('#ll').textContent=l;$('#lr').textContent=r;
+$('#lawv').innerHTML=a==b?`<span class="ok">✔ Equal.</span> Both sides shade the same regions, so this holds for any sets.`:`<span class="bad">✘ Not equal.</span> The shaded regions differ, so some sets will make the two sides give different results. Try them in the Lab.`}
+$('#lawchips').onclick=e=>{const b=e.target.closest('button');if(b){li=+b.dataset.i;renderLaws()}};
+$('#lawlab').onclick=()=>{const [,l,r]=LAWS[li];tab('lab');setN(/C/.test(l+r)?3:2);$('#ex').value=l;$('#ex').oninput()};
+
+const POOL={2:['A∪B','A∩B','A−B','B−A','A′','B′','AΔB','(A∪B)′','(A∩B)′','A′∩B','A∪B′','A′∪B′'],3:['A∩B∩C','A∪B∪C','A−(B∪C)','(A∩B)−C','A∩(B∪C)','(A∪B)∩C','A′∩B′∩C′','(A∩B)∪C','AΔB','A∩(B−C)','(A∪B)−C','AΔBΔC','B′∩C','(A∩C)−B','(A∪B∪C)′']};
+const pr={q:null,ok:0,tot:0,sh:0,done:false};
+const shuf=a=>a.map(v=>[Math.random(),v]).sort((x,y)=>x[0]-y[0]).map(x=>x[1]);
+function newQ(){const n=Math.random()<.5?2:3,P=POOL[n],e=P[Math.floor(Math.random()*P.length)],bits=ev(e,n),type=Math.random()<.5?0:1;let opts=[];
+if(type){const seen=new Set([bits]);shuf(P).forEach(o=>{const b=ev(o,n);if(opts.length<3&&!seen.has(b)){seen.add(b);opts.push(o)}});opts=shuf([e,...opts])}
+pr.q={n,e,bits,type,opts};pr.sh=0;pr.done=false;$('#fb').textContent='';renderPr()}
+function renderPr(){const q=pr.q;draw($('#cv3'),q.n,q.type?q.bits:pr.sh,[]);
+$('#prompt').innerHTML=q.type?'Which expression describes the <b>shaded</b> region?':`Shade the region for <span class="ex">${q.e}</span>. Click the regions to shade them.`;
+$('#popts').innerHTML=q.type?q.opts.map(o=>`<button class="ex" ${pr.done?'disabled':''} data-o="${o}">${o}</button>`).join(''):`<button id="chk" ${pr.done?'disabled':''}>Check</button><button id="rev" ${pr.done?'disabled':''}>Show answer</button>`;
+$('#score').textContent=`Score: ${pr.ok} / ${pr.tot}`}
+function finish(good,msg){pr.tot++;if(good)pr.ok++;pr.done=true;pr.sh=pr.q.bits;$('#fb').innerHTML=`<span class="${good?'ok':'bad'}">${msg}</span> <span class="mut">${pr.q.e} = ${sop(pr.q.bits,pr.q.n)}</span>`;renderPr()}
+$('#popts').onclick=e=>{const b=e.target.closest('button');if(!b||pr.done)return;const q=pr.q;
+if(b.dataset.o)finish(ev(b.dataset.o,q.n)==q.bits,ev(b.dataset.o,q.n)==q.bits?'✔ Correct.':'✘ Not quite.');
+else if(b.id=='chk')finish(pr.sh==q.bits,pr.sh==q.bits?'✔ Correct.':'✘ Not quite. The correct shading is shown.');
+else if(b.id=='rev')finish(false,'Here is the answer.')};
+$('#cv3').onclick=e=>{if(pr.q.type||pr.done)return;pr.sh^=1<<pick($('#cv3'),e,pr.q.n);renderPr()};
+$('#next').onclick=newQ;
+
+function tab(t){$$('#tabs button').forEach(b=>b.classList.toggle('on',b.dataset.t==t));['lab','laws','prac'].forEach(s=>$('#'+s).hidden=s!=t);if(t=='laws')renderLaws();if(t=='prac')renderPr();if(t=='lab')renderLab()}
+$('#tabs').onclick=e=>{const b=e.target.closest('button');if(b)tab(b.dataset.t)};
+matchMedia('(prefers-color-scheme: dark)').onchange=()=>{renderLab();renderLaws();renderPr()};
+setN(3);newQ();renderLaws();
+</script></body></html>
