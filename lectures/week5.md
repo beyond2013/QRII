@@ -62,3 +62,44 @@ $$y = 0.02x + 10$$
   $$y = 0.02(1000) + 10 = 20 + 10 = \$30$$
 
 This allows a developer or project manager to deterministically forecast operational expenses before launching an application into production.
+
+# Practice Exercises: Deterministic Models & Linear Functions
+
+These exercises are designed for 2nd-semester BS Artificial Intelligence students to practice formulating, interpreting, and solving real-world deterministic linear models ($y = mx + c$).
+
+---
+
+## Exercise 1: Ride-Hailing Service Pricing
+A local ride-hailing application charges passengers according to a fixed base fare plus a variable rate per kilometer. 
+* The base booking fee is **Rs. 150**.
+* The distance charge is **Rs. 30 per kilometer**.
+
+**Questions:**
+1. Write a linear equation that models the total fare ($y$) as a function of the distance traveled in kilometers ($x$).
+2. Identify the slope ($m$) and the y-intercept ($c$) of your equation, and explain what each value represents in the context of the ride.
+3. Calculate the total fare for a trip that is **12 kilometers** long.
+
+---
+
+## Exercise 2: GPU Cloud Training Costs
+As an AI developer, you are running a server instance to fine-tune a small language model. The cloud provider bills users with a fixed infrastructure setup fee plus an hourly compute rate.
+* The fixed setup fee is **$5.00** (charged once when the job starts).
+* The GPU usage fee is **$0.50 per hour**.
+
+**Questions:**
+1. Formulate a deterministic linear model for the total cost ($y$) given $x$ hours of GPU usage.
+2. If your model training script runs for **7.5 hours**, what will be the exact total cost?
+3. If you have a strict budget of **$35.00**, what is the maximum number of whole hours you can afford to run the training job?
+
+---
+
+## Exercise 3: Conceptual Reasoning
+Consider the following two data-driven scenarios:
+* **Scenario A:** Calculating the total storage size of a dataset containing $x$ images, where every single image is compressed to an exact, fixed size of 2 MB (plus a 10 MB system folder overhead).
+* **Scenario B:** Predicting whether a website visitor will click "Buy Now" based on their past browsing history.
+
+**Questions:**
+1. Which of these scenarios represents a **deterministic model**, and which represents a **probabilistic model**? Justify your answer.
+2. In Scenario A, write the linear equation for total storage size ($y$) relative to the number of images ($x$).
+
+---
