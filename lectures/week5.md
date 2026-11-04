@@ -1,6 +1,6 @@
 # Lecture: Introduction to Deterministic Models and Linear Functions in Real-World Scenarios
 
-As part of the **Quantitative Reasoning (II)** curriculum under the HEC undergraduate policy, understanding how to apply mathematical techniques to practical situations begins with building robust, predictable frameworks[cite: 5]. This lecture introduces the fundamental concepts of deterministic modeling and linear functions, tailored specifically for second-semester undergraduate students.
+As part of the **Quantitative Reasoning (II)** curriculum under the HEC undergraduate policy, understanding how to apply mathematical techniques to practical situations begins with building robust, predictable frameworks. This lecture introduces the fundamental concepts of deterministic modeling and linear functions, tailored specifically for second-semester undergraduate students.
 
 ---
 
@@ -9,7 +9,7 @@ As part of the **Quantitative Reasoning (II)** curriculum under the HEC undergra
 Before working with equations, it is essential to define what we mean by these foundational terms:
 
 * **Model:** A simplified mathematical representation of a real-world system, process, or relationship. Instead of getting bogged down by messy real-world complexities, a model uses numbers and equations to capture the core behavior we want to study.
-* **Deterministic Model:** A mathematical system or framework where every set of variable states is uniquely determined by parameters and rules, with **zero randomness or probability**[cite: 5]. If you run the model with the exact same input today, tomorrow, or a year from now, you will get the exact same output every single time. *(Contrast this with a probabilistic model, like weather forecasting, which deals with chances and likelihoods like "a 70% chance of rain".)*
+* **Deterministic Model:** A mathematical system or framework where every set of variable states is uniquely determined by parameters and rules, with **zero randomness or probability**. If you run the model with the exact same input today, tomorrow, or a year from now, you will get the exact same output every single time. *(Contrast this with a probabilistic model, like weather forecasting, which deals with chances and likelihoods like "a 70% chance of rain".)*
 
 ---
 
