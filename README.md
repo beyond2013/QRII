@@ -6,6 +6,7 @@ Welcome to the repository for **Quantitative Reasoning II**. This course builds 
 
 ## Course Details
 - **Course Title:** Quantitative Reasoning II
+- **Course Code:** QR-502
 - **Credit Hours:** 3
 - **Program:** BS Artificial Intelligence (2nd Semester)
 - **Session:** 2025–2029
