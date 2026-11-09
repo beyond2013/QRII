@@ -80,9 +80,9 @@ The final grade will be computed based on the following distribution:
 ---
 
 ## Recommended Books & Reading Materials
-1. *Using and Understanding Mathematics: A Quantitative Reasoning Approach* by Bennett, J. O., Briggs, W. L., & Badalamenti, A.
-2. *Discrete Mathematics and its Applications* by Kenneth H. Rosen.
-3. *Discrete Mathematics with Applications* by Susanna S. Epp.
+1. [Using and Understanding Mathematics: A Quantitative Reasoning Approach by Bennett, J. O., Briggs, W. L., & Badalamenti, A.](https://www.pearson.com/en-us/subject-catalog/p/using-understanding-mathematics-a-quantitative-reasoning-approach/P200000014299)
+2. [Discrete Mathematics and its Applications* by Kenneth H. Rosen.](https://www.mheducation.com/highered/product/discrete-mathematics-and-its-applications-rosen.html)
+3. [Discrete Mathematics with Applications* by Susanna S. Epp.](https://www.amazon.com/Discrete-Mathematics-Applications-Kenneth-author/dp/1260091996)
 4. *Applied Mathematics for Business, Economics and Social Sciences* by Frank S. Budnick.
 5. *Elementary Statistics: A Step by Step Approach* by Allan Bluman.
 6. *Introductory Statistics* by Prem S. Mann.
